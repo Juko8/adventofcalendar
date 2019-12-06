@@ -70,11 +70,9 @@ function createWire(input) {
 function findShortestWireDistance(intersections, wire1, wire2) {
     let shortestDistance;
     intersections.forEach(intersection => {
-        const distance1 = wire1.indexOf(intersection) + 1;
-        const distance2 = wire2.indexOf(intersection) + 1;
-        console.log('Wire1 distance: ' + distance1 + ' Wire2 distance: ' + distance2);
+        const distance1 = wire1.findIndex(coordinate => intersection.x === coordinate.x && intersection.y === coordinate.y) + 1;
+        const distance2 = wire2.findIndex(coordinate => intersection.x === coordinate.x && intersection.y === coordinate.y) + 1;
         const wireDistance = distance1 + distance2;
-        console.log("Total wire Distance is " + wireDistance);
         if (!shortestDistance || wireDistance < shortestDistance ) {
             shortestDistance = wireDistance;
         }
@@ -88,24 +86,7 @@ const corynSect = (a, b, f) => {
     });
 }
 
-const test1 = [ "R75", "D30", "R83", "U83", "L12", "D49", "R71", "U7", "L72" ];
-const test2 = [ "U62", "R66", "U55", "R34", "D71", "R55", "D58", "R83" ];
-const test3 = [ "R98", "U47", "R26", "D63", "R33", "U87", "L62", "D20", "R33", "U53", "R51" ];
-const test4 = [ "U98", "R91", "D20", "R16", "D67", "R40", "U7", "R15", "U6", "R7" ];
-const test5 = [ "R8", "U5", "L5", "D3" ];
-const test6 = [ "U7", "R6", "D4", "L4" ];
-const wire1 = createWire(test1);
-const wire2 = createWire(test2);
-const wire3 = createWire(test3);
-const wire4 = createWire(test4);
-const wire5 = createWire(test5);
-const wire6 = createWire(test6);
+const wire1 = createWire(input1);
+const wire2 = createWire(input2);
 const intersections = corynSect(wire1, wire2, (a, b) => a.x === b.x && a.y === b.y);
-const intersections2 = corynSect(wire3, wire4, (a, b) => a.x === b.x && a.y === b.y);
-const intersections3 = corynSect(wire5, wire6, (a, b) => a.x === b.x && a.y === b.y);
-// console.log(intersections);
-// console.log(intersections2);
-// console.log(intersections3);
 console.log(findShortestWireDistance(intersections, wire1, wire2));
-console.log(findShortestWireDistance(intersections2, wire3, wire4));
-console.log(findShortestWireDistance(intersections3, wire5, wire6));
