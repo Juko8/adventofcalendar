@@ -32,30 +32,30 @@ const input2 = [
 ];
 
 function createWire(input) {
-    let wire = [{ x: 0, y: 0 }];
+    let wire = [{ x: 0, y: 0, steps: 0 }];
     input.forEach(e => {
         const direction = e.charAt(0);
         const length = e.slice(1, e.length);
         switch (direction) {
-            case 'U':
+            case "U":
                 for (let i = 0; i < length; i++) {
                     const coordinate = { x: wire[wire.length - 1].x, y: wire[wire.length - 1].y + 1 }
                     wire.push(coordinate);
                 }
                 break;
-            case 'R':
+            case "R":
                 for (let i = 0; i < length; i++) {
                     const coordinate = { x: wire[wire.length - 1].x + 1, y: wire[wire.length - 1].y }
                     wire.push(coordinate);
                 }
                 break;
-            case 'D':
+            case "D":
                 for (let i = 0; i < length; i++) {
                     const coordinate = { x: wire[wire.length - 1].x, y: wire[wire.length - 1].y - 1 }
                     wire.push(coordinate);
                 }
                 break;
-            case 'L':
+            case "L":
                 for (let i = 0; i < length; i++) {
                     const coordinate = { x: wire[wire.length - 1].x - 1, y: wire[wire.length - 1].y }
                     wire.push(coordinate);
@@ -67,12 +67,16 @@ function createWire(input) {
     return wire.slice();
 }
 
-function findShortestDistance(intersections) {
+function findShortestWireDistance(intersections, wire1, wire2) {
     let shortestDistance;
     intersections.forEach(intersection => {
-        const manhattanDistance = Math.abs(intersection.x) + Math.abs(intersection.y);
-        if (!shortestDistance || manhattanDistance < shortestDistance ) {
-            shortestDistance = manhattanDistance;
+        const distance1 = wire1.indexOf(intersection) + 1;
+        const distance2 = wire2.indexOf(intersection) + 1;
+        console.log('Wire1 distance: ' + distance1 + ' Wire2 distance: ' + distance2);
+        const wireDistance = distance1 + distance2;
+        console.log("Total wire Distance is " + wireDistance);
+        if (!shortestDistance || wireDistance < shortestDistance ) {
+            shortestDistance = wireDistance;
         }
     });
     return shortestDistance;
@@ -84,7 +88,24 @@ const corynSect = (a, b, f) => {
     });
 }
 
-const wire1 = createWire(input1);
-const wire2 = createWire(input2);
+const test1 = [ "R75", "D30", "R83", "U83", "L12", "D49", "R71", "U7", "L72" ];
+const test2 = [ "U62", "R66", "U55", "R34", "D71", "R55", "D58", "R83" ];
+const test3 = [ "R98", "U47", "R26", "D63", "R33", "U87", "L62", "D20", "R33", "U53", "R51" ];
+const test4 = [ "U98", "R91", "D20", "R16", "D67", "R40", "U7", "R15", "U6", "R7" ];
+const test5 = [ "R8", "U5", "L5", "D3" ];
+const test6 = [ "U7", "R6", "D4", "L4" ];
+const wire1 = createWire(test1);
+const wire2 = createWire(test2);
+const wire3 = createWire(test3);
+const wire4 = createWire(test4);
+const wire5 = createWire(test5);
+const wire6 = createWire(test6);
 const intersections = corynSect(wire1, wire2, (a, b) => a.x === b.x && a.y === b.y);
-console.log(findShortestDistance(intersections));
+const intersections2 = corynSect(wire3, wire4, (a, b) => a.x === b.x && a.y === b.y);
+const intersections3 = corynSect(wire5, wire6, (a, b) => a.x === b.x && a.y === b.y);
+// console.log(intersections);
+// console.log(intersections2);
+// console.log(intersections3);
+console.log(findShortestWireDistance(intersections, wire1, wire2));
+console.log(findShortestWireDistance(intersections2, wire3, wire4));
+console.log(findShortestWireDistance(intersections3, wire5, wire6));
