@@ -82,10 +82,12 @@ const input = [ "WGB)S14", "WN4)27C", "18L)M18", "1HY)6ZP", "TQ9)KQ6", "HQ3)HH1"
     "VKV)TQ4", "4LM)YM4", "T8S)6N6", "HPP)WV4", "99X)8YW", "B9P)HDV", "T2Q)TNM", "JVG)7XG", "QGH)KTD", "DBX)VNZ", "DFM)RSW", "29D)GYC", "LYS)38D", 
     "MKK)WXZ", "5B5)MQ5", "BPX)2NW", "5LR)PYY", "VXL)6HL", ];
 
+    const test = [ "A)B", "B)C", "C)D", "D)E", "E)F", "B)G", "G)H", "D)I", "E)J", "J)K", "K)L" ];
+
     class spaceObject {
-        constructor(name, orbitCenter) {
+        constructor(name) {
             this.name = name;
-            this.orbitCenter = orbitCenter;
+            this.orbitCenter;
             this.orbiters = [];
         }
     }
@@ -96,13 +98,13 @@ const input = [ "WGB)S14", "WN4)27C", "18L)M18", "1HY)6ZP", "TQ9)KQ6", "HQ3)HH1"
             const center = new spaceObject(orbit.slice(0, 3));
             const orbiter = new spaceObject(orbit.slice(4));
             if (!planets.some(planet => planet.name === center.name)) {
-                center.orbiters.push(orbiter);
                 planets.push(center);
-            } else {
-                planets.find(planet => planet.name === center.name).orbiters.push(planets.find(planet => planet.name === orbiter.name) || orbiter);
             }
-            planets.push(planets.find(planet => planet.name === orbiter.name) || orbiter);
-            (planets.find(planet => planet.name === orbiter.name) || orbiter).orbitCenter = center;
+            if (!planets.some(planet => planet.name === orbiter.name)) {
+                planets.push(orbiter);
+            }
+            planets.find(planet => planet.name === center.name).orbiters.push(planets.find(planet => planet.name === orbiter.name) || orbiter);
+            (planets.find(planet => planet.name === orbiter.name) || orbiter).orbitCenter = planets.find(planet => planet.name === center.name);
         });
         return planets;
     }
@@ -111,15 +113,11 @@ const input = [ "WGB)S14", "WN4)27C", "18L)M18", "1HY)6ZP", "TQ9)KQ6", "HQ3)HH1"
         return galaxyMap.find(planet => !planet.orbitCenter);
     }
 
-    function orbitSum(spaceObject) {
-        if (spaceObject.orbiters.length === 0) {
-            console.log(spaceObject.name);
-            return 0;
-        } else {
-            return spaceObject.orbiters.reduce((sum, orbiter) => {
-                return sum + orbitSum(orbiter) + 1;
-            }, spaceObject.orbiters.length);
-        }
+    function orbitSum(spaceObject, indirectOrbits = 0 ) {
+        return spaceObject.orbiters.reduce((sum, orbiter) => {
+            return sum + indirectOrbits + 1 + orbitSum(orbiter, indirectOrbits + 1);
+        }, 0);
     }
 
+    console.log(galaxyBuilder(input).length);
     console.log(orbitSum(findCom(galaxyBuilder(input))));
